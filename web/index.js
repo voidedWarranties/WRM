@@ -2,10 +2,14 @@ const express = require("express");
 const session = require("express-session");
 const ejs = require("ejs");
 
+const io = require("socket.io").listen(4000).sockets;
+
 const path = require("path");
 
 const mongoose = require("mongoose");
 const mongooseSession = require("connect-mongo")(session);
+
+const mongo = require("mongodb").MongoClient; // TWO DRIVERS???? TWO DRIIIVERRSSSS
 
 const driver = require("./../database/driver.js");
 
@@ -15,6 +19,44 @@ const DiscordStrategy = require("passport-discord").Strategy;
 const config = require("./../config.json");
 
 const app = express();
+
+mongo.connect(config.mongodb_url, function(err, db) {
+  if(err) {
+    throw err;
+  }
+
+  console.log("MongoDB Native Driver Connected");
+
+  io.on("connect", function(socket) {
+    console.log("index.js Socket Connected");
+    let reports = db.collection("reports");
+
+    reports.find().sort({_id:1}).toArray(function(err, res) {
+      if(err) {
+        throw err;
+      }
+
+      socket.emit("output", res);
+    });
+
+    socket.on("input", function(data) {
+      console.log("INPUT");
+      let content = data.content;
+
+      reports.insert(data, function() {
+        console.log("insert");
+        io.emit("output", [data]);
+      });
+    });
+
+    socket.on("clear", function(data) {
+      reports.remove({}, function() {
+        socket.emit("cleared");
+        console.log("CLEARED REPORTS");
+      });
+    });
+  });
+});
 
 const store = new mongooseSession({
   mongooseConnection: driver.getConnection()
@@ -28,6 +70,10 @@ app.set("view engine", "ejs");
 const scopes = ["identify", "email", "guilds"];
 
 module.exports = (bot) => {
+
+  driver.getConnection().on("connected", function() {
+    console.log("Mongoose Connected");
+  });
 
   function checkAuthenticated(req, res, next) {
     if(req.isAuthenticated()) { return next; }
@@ -127,7 +173,10 @@ module.exports = (bot) => {
   });
 
   app.get("/reports", (req, res) => {
-    res.send(bot.guilds.find("id", config.server_id).channels.find("name", "support"));
+    // res.send(bot.guilds.find("id", config.server_id).channels.find("name", "support"));
+    res.render("reports.ejs", {
+      socket_url: config.socket_url
+    });
   });
 
   app.listen(config.server_port, config.server_ip, () => {

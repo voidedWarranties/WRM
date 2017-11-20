@@ -9,5 +9,6 @@
   "server_port": 1337,
   "mongodb_url": "mongodb://localhost/snowwolf",
   "trusted_user_ids": ["", ""],
-  "server_id": ""
+  "server_id": "",
+  "socket_url": ""
 }
