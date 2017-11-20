@@ -1,0 +1,13 @@
+{
+  "bot_token": "",
+  "owner_id": "",
+  "prefix": "",
+  "client_id": "",
+  "client_secret": "",
+  "hosting_url": "http://localhost:1337/",
+  "server_ip": "localhost",
+  "server_port": 1337,
+  "mongodb_url": "mongodb://localhost/snowwolf",
+  "trusted_user_ids": ["", ""],
+  "server_id": ""
+}

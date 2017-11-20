@@ -1,0 +1,32 @@
+body {
+  background-color: #252532;
+}
+
+p {
+  font-family: 'Open Sans', sans-serif;
+  color: #FFF;
+}
+
+h1 {
+  font-family: 'Open Sans', sans-serif;
+  color: #FFF;
+}
+
+a {
+  font-family: 'Open Sans', sans-serif;
+  text-decoration: none;
+  color: #99AAB5;
+}
+
+.icon {
+  border-radius: 100%;
+  width: 32px;
+  height: 32px;
+  vertical-align: middle;
+}
+
+.logo {
+  vertical-align: middle;
+  width: 200px;
+  height: 68px;
+}

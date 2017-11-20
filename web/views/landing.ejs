@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SnowWolfD.JS</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/landing.css">
+  </head>
+  <body>
+    <p>Bot logged in as <%= bot.user.username %>#<%= bot.user.discriminator %> (<%= bot.user.id %>)</p>
+    <% if(authUser) { %>
+      <p><img src="<%= authUser.avatar %>" alt="<%= authUser.id %>" class="icon"> <%= authUser.username %>#<%= authUser.discriminator %> (<%= authUser.id %>)</p>
+      <a href="/logout">Logout</a>
+      <hr>
+      <center>
+        <% for(i = 0; i < authUser.guilds.length; i++) { %>
+          <% if(authUser.guilds[i].id === config.server_id) { %>
+            <h1><%= authUser.guilds[i].name %></h1>
+            <a href="/reports">Reports</a>
+          <% } %>
+        <% } %>
+      </center>
+    <% } else { %>
+      <a href="/login">Login</login>
+    <% } %>
+  </body>
+</html>
