@@ -28,8 +28,11 @@ client.on("ready", () => {
   });
 
   driver.init();
-  webServer(client);
-  socket.connect();
+  webServer.start(client);
+  webServer.io(client, () => {
+    console.log("Callback was received from index.js, socket client connecting");
+    socket.connect();
+  });
 });
 
 socket.on("connect", function() {
@@ -43,19 +46,18 @@ socket.on("error", function(error) {
 
 client.on("message", message => {
   if(message.channel.guild.id === config.server_id && message.channel.name === "support") {
-    console.log(message.attachments.array().length);
-    console.log(Array.from(getUrls(message.content)).length);
     if(message.attachments.array().length || Array.from(getUrls(message.content)).length) {
-      console.log(message.attachments, Array.from(getUrls(message.content)));
       socket.emit("input", {
         author: {
           username: message.author.username,
           discriminator: message.author.discriminator,
+          id: message.author.id,
           avatar: message.author.avatarURL ? message.author.avatarURL : meessage.author.defaultAvatarURL
         },
         content: message.content,
         url: Array.from(getUrls(message.content)).length ? Array.from(getUrls(message.content)) : null,
-        attachments: message.attachments.array().length ? message.attachments.array().map(a => a.url) : null
+        attachments: message.attachments.array().length ? message.attachments.array().map(a => a.url) : null,
+        id: message.id
       });
     }
   }

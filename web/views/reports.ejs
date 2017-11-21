@@ -12,7 +12,7 @@
         <div class="col-md-6 offset-md-3 col-sm-12">
           <h1 class="text-center">
             Reports
-            <button id="clear" class="btn btn-danget">Clear</button>
+            <button id="clear" class="btn btn-danger">Clear</button>
           </h1>
           <div id="report-cont">
             <div class="card">
@@ -34,6 +34,91 @@
           return document.getElementById(id);
         }
 
+        function resolve(data, i) {
+          return function() { socket.emit("resolve", data[i]); };
+        }
+
+        function create(data) {
+          if(data.length) {
+            for(var x = 0; x < data.length; x++) {
+              // Report //
+              var report = document.createElement("div");
+
+              report.setAttribute("class", "report");
+              // Report //
+
+              // Avatar //
+              var avatar = document.createElement("img");
+
+              avatar.setAttribute("src", data[x].author.avatar);
+              avatar.setAttribute("style", "border-radius: 100%; width: 32px; height: 32px; vertical-align: middle; display: inline;");
+
+              report.appendChild(avatar);
+              // Avatar //
+
+              // Report Content //
+              var reportContent = document.createElement("span");
+
+              reportContent.setAttribute("style", "padding-left: 0.5em;");
+              reportContent.textContent = data[x].author.username + "#" + data[x].author.discriminator + ": " + data[x].content;
+
+              report.appendChild(reportContent);
+              // Report Content //
+
+              // Report Image //
+              if(data[x].url != null) {
+                for(i = 0; i < data[x].url.length; i++) {
+                  console.log(data[x].url[i]);
+                  if(data[x].url[i].endsWith(".png") || data[x].url[i].endsWith(".jpg") || data[x].url[i].endsWith(".jpeg") || data[x].url[i].endsWith(".gif")) {
+                    var reportImage = document.createElement("img");
+
+                    reportImage.setAttribute("src", data[x].url[i]);
+                    reportImage.setAttribute("style", "max-height: 100%; max-width: 100%; padding-top: 0.5em;");
+
+                    report.appendChild(reportImage);
+                  }
+                }
+              }
+
+              if(data[x].attachments != null) { // We do this in case both an attachment and a link are sent
+                for(i = 0; i < data[x].attachments.length; i++) {
+                  console.log(data[x].attachments[i]);
+                  if(data[x].attachments[i].endsWith(".png") || data[x].attachments[i].endsWith(".jpg") || data[x].attachments[i].endsWith(".jpeg") || data[x].attachments[i].endsWith(".gif")) {
+                    var reportImage = document.createElement("img");
+
+                    reportImage.setAttribute("src", data[x].attachments[i]);
+                    reportImage.setAttribute("style", "max-height: 100%; max-width: 100%");
+
+                    report.appendChild(reportImage);
+                  }
+                }
+              }
+              // Report Image //
+
+              // Resolve Button //
+              var resolveButton = document.createElement("button");
+
+              resolveButton.setAttribute("class", "btn btn-success");
+              resolveButton.onclick = resolve(data, x); // JS is stupid in some ways so this is required.
+              resolveButton.textContent = "Resolve";
+
+              report.appendChild(resolveButton);
+              // Resolve Button //
+
+              // Break Line //
+              var breakLine = document.createElement("hr");
+
+              report.appendChild(breakLine);
+              // Break Line //
+
+              reports.appendChild(report);
+
+              report.insertBefore(avatar, reportContent);
+              reports.insertBefore(report, reports.firstChild);
+            }
+          }
+        }
+
         var reports = element("reports");
         var clearBtn = element("clear");
 
@@ -43,25 +128,16 @@
           console.log("socket.io Connected");
 
           socket.on("output", function(data) {
-            if(data.length) {
-              for(var x = 0; x < data.length; x++) {
-                var avatar = document.createElement("img");
+            create(data);
+          });
 
-                avatar.setAttribute("src", data[x].author.avatar);
-                avatar.setAttribute("style", "border-radius: 100%; width: 32px; height: 32px; vertical-align: middle;");
-
-                var report = document.createElement("div");
-
-                report.setAttribute("class", "report");
-                report.textContent = data[x].author.username + "#" + data[x].author.discriminator + ": " + data[x].content;
-                report.appendChild(avatar);
-                reports.appendChild(report);
-                reports.insertBefore(report, reports.firstChild);
-              }
-            }
+          socket.on("delete", function(data) {
+            reports.textContent = "";
+            create(data);
           });
 
           clearBtn.addEventListener("click", function() {
+            console.log("clear");
             socket.emit("clear");
           });
 
