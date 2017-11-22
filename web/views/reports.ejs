@@ -3,27 +3,22 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatiable" content="ie=edge">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <title>Reports</title>
   </head>
   <body>
     <div class="container">
-      <div class="row">
-        <div class="col-md-6 offset-md-3 col-sm-12">
-          <h1 class="text-center">
-            Reports
-            <button id="clear" class="btn btn-danger">Clear</button>
-          </h1>
-          <div id="report-cont">
-            <div class="card">
-              <center>
-                <div id="reports" class="card-block">
+      <h1 class="text-center">
+        Reports
+        <button id="clear" class="btn btn-danger">Clear</button>
+      </h1>
+      <div id="report-cont">
+        <center>
+          <div id="reports" class="card-block">
 
-                </div>
-              </center>
-            </div>
           </div>
-        </div>
+        </center>
       </div>
     </div>
 
@@ -36,6 +31,18 @@
 
         function resolve(data, i) {
           return function() { socket.emit("resolve", data[i]); };
+        }
+
+        function falsify(data, i) {
+          return function() { socket.emit("falsify", data[i]); };
+        }
+
+        function move(data, i) {
+          return function() { socket.emit("move", data[i]); };
+        }
+
+        function investigate(data, i) {
+          return function() { socket.emit("investigate", data[i]); };
         }
 
         function create(data) {
@@ -73,7 +80,7 @@
                     var reportImage = document.createElement("img");
 
                     reportImage.setAttribute("src", data[x].url[i]);
-                    reportImage.setAttribute("style", "max-height: 100%; max-width: 100%; padding-top: 0.5em;");
+                    reportImage.setAttribute("style", "max-height: 75%; max-width: 75%; padding-top: 0.5em;");
 
                     report.appendChild(reportImage);
                   }
@@ -87,7 +94,7 @@
                     var reportImage = document.createElement("img");
 
                     reportImage.setAttribute("src", data[x].attachments[i]);
-                    reportImage.setAttribute("style", "max-height: 100%; max-width: 100%");
+                    reportImage.setAttribute("style", "max-height: 75%; max-width: 75%");
 
                     report.appendChild(reportImage);
                   }
@@ -95,15 +102,95 @@
               }
               // Report Image //
 
+              // Spacer //
+              var spacer = document.createElement("br");
+
+              report.appendChild(spacer);
+              // Spacer //
+
               // Resolve Button //
+              // Resolve Glyph //
+              var resolveGlyph = document.createElement("span");
+
+              resolveGlyph.setAttribute("class", "glyphicon glyphicon-ok");
+              // Resolve Glyph //
+              // Resolve Text //
+              var resolveText = document.createElement("span");
+
+              resolveText.textContent = " Resolve";
+              // Resolve Text //
               var resolveButton = document.createElement("button");
 
               resolveButton.setAttribute("class", "btn btn-success");
               resolveButton.onclick = resolve(data, x); // JS is stupid in some ways so this is required.
-              resolveButton.textContent = "Resolve";
 
+              resolveButton.appendChild(resolveGlyph);
+              resolveButton.appendChild(resolveText);
               report.appendChild(resolveButton);
               // Resolve Button //
+
+              // False Report Button //
+              // False Report Glyph //
+              var falsifyGlyph = document.createElement("span");
+
+              falsifyGlyph.setAttribute("class", "glyphicon glyphicon-remove");
+              // False Report Glyph //
+              // False Report Text //
+              var falsifyText = document.createElement("span");
+
+              falsifyText.textContent = " Falsify";
+              // False Report Text //
+              var falsifyButton = document.createElement("button");
+
+              falsifyButton.setAttribute("class", "btn btn-warning");
+              falsifyButton.onclick = falsify(data, x);
+
+              falsifyButton.appendChild(falsifyGlyph);
+              falsifyButton.appendChild(falsifyText);
+              report.appendChild(falsifyButton);
+              // False Report Button //
+
+              // Move Button //
+              // Move Glyph //
+              var moveGlyph = document.createElement("span");
+
+              moveGlyph.setAttribute("class", "glyphicon glyphicon-arrow-right");
+              // Move Glyph //
+              // Move Text //
+              var moveText = document.createElement("span");
+
+              moveText.textContent = " Move to #general";
+              // Move Text //
+              var moveButton = document.createElement("button");
+
+              moveButton.setAttribute("class", "btn btn-danger");
+              moveButton.onclick = move(data, x);
+
+              moveButton.appendChild(moveGlyph);
+              moveButton.appendChild(moveText);
+              report.appendChild(moveButton);
+              // Move Button //
+
+              // Investigate Button //
+              // Investigate Glyph //
+              var investigateGlyph = document.createElement("span");
+
+              investigateGlyph.setAttribute("class", "glyphicon glyphicon-search");
+              // Investigate Glyph //
+              // Investigate Text //
+              var investigateText = document.createElement("span");
+
+              investigateText.textContent = " Investigate";
+              // Investigate Text //
+              var investigateButton = document.createElement("button");
+
+              investigateButton.setAttribute("class", "btn btn-info");
+              investigateButton.onclick = investigate(data, x);
+
+              investigateButton.appendChild(investigateGlyph);
+              investigateButton.appendChild(investigateText);
+              report.appendChild(investigateButton);
+              // Investigate Button //
 
               // Break Line //
               var breakLine = document.createElement("hr");

@@ -36,9 +36,11 @@ module.exports = {
     });
 
     function checkAuthenticated(req, res, next) {
-      if(req.isAuthenticated()) { return next; }
-      res.redirect("/");
-      return true;
+      if(req.user) {
+        next();
+      } else {
+        res.redirect("/");
+      }
     }
 
     function getAuthUser(user) {
@@ -132,7 +134,7 @@ module.exports = {
       res.render("error.ejs");
     });
 
-    app.get("/reports", (req, res) => {
+    app.get("/reports", checkAuthenticated, (req, res) => {
       // res.send(bot.guilds.find("id", config.server_id).channels.find("name", "support"));
       res.render("reports.ejs", {
         socket_url: config.socket_url
@@ -153,9 +155,9 @@ module.exports = {
       console.log("MongoDB Native Driver Connected, telling client, bot.js, it is okay to connect now");
       callback();
       io.on("connect", function(socket) {
-        console.log("index.js Socket Connected");
         let reports = db.collection("reports");
 
+        // Functions to avoid being repetitive
         const update = () => {
           reports.find().toArray(function(err, res) { // Weird way of updating list
             if(err) {
@@ -163,6 +165,19 @@ module.exports = {
             }
 
             socket.emit("output", res);
+          });
+        }
+
+        const deleteUpdate = (data, message) => { // For some reason, you can't define a variable with name 'delete'
+          reports.remove({id: data.id}, function() {
+            bot.guilds.find("id", config.server_id).channels.find("name", "support").send(message);
+            reports.find().toArray(function(err, res) { // Weird way of updating list
+              if(err) {
+                throw err;
+              }
+
+              socket.emit("delete", res);
+            });
           });
         }
 
@@ -184,16 +199,19 @@ module.exports = {
         });
 
         socket.on("resolve", function(data) {
-          reports.remove({id: data.id}, function() {
-            bot.guilds.find("id", config.server_id).channels.find("name", "support").send(`Solved, Thanks for reporting <@${data.author.id}>`);
-            reports.find().toArray(function(err, res) { // Weird way of updating list
-              if(err) {
-                throw err;
-              }
+          deleteUpdate(data, `Solved, Thanks for reporting <@${data.author.id}>`);
+        });
 
-              socket.emit("delete", res);
-            });
-          });
+        socket.on("falsify", function(data) {
+          deleteUpdate(data, `Invalid report, Not punishable, Thanks for reporting <@${data.author.id}>`);
+        });
+
+        socket.on("move", function(data) {
+          deleteUpdate(data, "Please move to #general for chatting.");
+        });
+
+        socket.on("investigate", function(data) {
+          bot.guilds.find("id", config.server_id).channels.find("name", "support").send(`<@${data.author.id}>, Your report is undergoing investigation, please be patient!`);
         });
       });
     });
