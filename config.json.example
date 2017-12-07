@@ -7,7 +7,7 @@
   "hosting_url": "http://localhost:1337/",
   "server_ip": "localhost",
   "server_port": 1337,
-  "mongodb_url": "mongodb://localhost/snowwolf",
+  "mongodb_url": "mongodb://localhost/wrm",
   "trusted_user_ids": ["", ""],
   "server_id": "",
   "socket_url": ""

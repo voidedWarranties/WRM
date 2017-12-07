@@ -1,3 +1,4 @@
+const http = require("http");
 const express = require("express");
 const session = require("express-session");
 const ejs = require("ejs");
@@ -17,6 +18,8 @@ const DiscordStrategy = require("passport-discord").Strategy;
 const config = require("./../config.json");
 
 const app = express();
+
+const server = http.createServer(app);
 
 const store = new mongooseSession({
   mongooseConnection: driver.getConnection()
@@ -141,12 +144,13 @@ module.exports = {
       });
     });
 
-    app.listen(config.server_port, config.server_ip, () => {
-      console.log("WebPanel Running");
-    });
+    // app.listen(config.server_port, config.server_ip, () => {
+    //   console.log("WebPanel Running");
+    // });
+    server.listen(config.server_port, config.server_ip);
   },
   io: (bot, callback) => {
-    const io = require("socket.io").listen(4000).sockets;
+    const io = require("socket.io")(server).sockets;
     mongo.connect(config.mongodb_url, function(err, db) {
       if(err) {
         throw err;

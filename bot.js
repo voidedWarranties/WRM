@@ -10,7 +10,7 @@ const getUrls = require("get-urls");
 const ioclient = require("socket.io-client");
 const util = require("util");
 
-const socket = ioclient(`http://${config.socket_url}:4000`, {autoConnect: false});
+const socket = ioclient(`http://localhost:8080`, {autoConnect: false});
 
 const client = new Commando.Client({
   owner: config.owner_id,

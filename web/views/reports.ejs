@@ -209,7 +209,7 @@
         var reports = element("reports");
         var clearBtn = element("clear");
 
-        var socket = io.connect("http://<%= socket_url%>:4000");
+        var socket = io.connect("http://<%= socket_url%>:8080", {transports:["websocket"]});
 
         if(socket !== undefined) {
           console.log("socket.io Connected");
