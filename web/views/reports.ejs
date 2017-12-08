@@ -9,10 +9,7 @@
   </head>
   <body>
     <div class="container">
-      <h1 class="text-center">
-        Reports
-        <button id="clear" class="btn btn-danger">Clear</button>
-      </h1>
+      <h1 class="text-center">Reports</h1>
       <div id="report-cont">
         <center>
           <div id="reports" class="card-block">
@@ -43,6 +40,10 @@
 
         function investigate(data, i) {
           return function() { socket.emit("investigate", data[i]); };
+        }
+
+        function remove(data, i) {
+          return function() { socket.emit("remove", data[i]); };
         }
 
         function create(data) {
@@ -192,6 +193,27 @@
               report.appendChild(investigateButton);
               // Investigate Button //
 
+              // Delete Button //
+              // Delete Glyph //
+              var deleteGlyph = document.createElement("span");
+
+              deleteGlyph.setAttribute("class", "glyphicon glyphicon-remove");
+              // Delete Glyph //
+              // Delete Text //
+              var deleteText = document.createElement("span");
+
+              deleteText.textContent = " Delete";
+              // Delete Text //
+              var deleteButton = document.createElement("button");
+
+              deleteButton.setAttribute("class", "btn btn-danger");
+              deleteButton.onclick = remove(data, x);
+
+              deleteButton.appendChild(deleteGlyph);
+              deleteButton.appendChild(deleteText);
+              report.appendChild(deleteButton);
+              // Delete Button //
+
               // Break Line //
               var breakLine = document.createElement("hr");
 
@@ -209,7 +231,7 @@
         var reports = element("reports");
         var clearBtn = element("clear");
 
-        var socket = io.connect("http://<%= socket_url%>:8080", {transports:["websocket"]});
+        var socket = io.connect("http://<%= config.socket_url %>:<%= config.server_port %>", {transports:["websocket"]});
 
         if(socket !== undefined) {
           console.log("socket.io Connected");
@@ -221,15 +243,6 @@
           socket.on("delete", function(data) {
             reports.textContent = "";
             create(data);
-          });
-
-          clearBtn.addEventListener("click", function() {
-            console.log("clear");
-            socket.emit("clear");
-          });
-
-          socket.on("cleared", function() {
-            reports.textContent = "";
           });
         }
       })();

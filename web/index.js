@@ -138,15 +138,11 @@ module.exports = {
     });
 
     app.get("/reports", checkAuthenticated, (req, res) => {
-      // res.send(bot.guilds.find("id", config.server_id).channels.find("name", "support"));
       res.render("reports.ejs", {
-        socket_url: config.socket_url
+        config
       });
     });
-
-    // app.listen(config.server_port, config.server_ip, () => {
-    //   console.log("WebPanel Running");
-    // });
+    
     server.listen(config.server_port, config.server_ip);
   },
   io: (bot, callback) => {
@@ -188,17 +184,8 @@ module.exports = {
         update();
 
         socket.on("input", function(data) {
-          console.log("INPUT");
-
           reports.insert(data, function() {
             io.emit("output", [data]);
-          });
-        });
-
-        socket.on("clear", function(data) {
-          reports.remove({}, function() {
-            socket.emit("cleared");
-            console.log("CLEARED REPORTS");
           });
         });
 
@@ -216,6 +203,18 @@ module.exports = {
 
         socket.on("investigate", function(data) {
           bot.guilds.find("id", config.server_id).channels.find("name", "support").send(`<@${data.author.id}>, Your report is undergoing investigation, please be patient!`);
+        });
+
+        socket.on("remove", function(data) {
+          reports.remove({id: data.id}, function() {
+            reports.find().toArray(function(err, res) { // Weird way of updating list
+              if(err) {
+                throw err;
+              }
+
+              socket.emit("delete", res);
+            });
+          });
         });
       });
     });
