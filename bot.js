@@ -37,6 +37,9 @@ client.on("ready", () => {
 
 socket.on("connect", function() {
   console.log("Client > Server");
+  if(process.argv[2] && process.argv[2] == "travis") {
+    process.exit(0);
+  }
 });
 
 socket.on("error", function(error) {
