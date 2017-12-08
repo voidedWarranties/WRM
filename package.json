@@ -4,7 +4,7 @@
   "description": "",
   "main": "bot.js",
   "scripts": {
-    "test": "nodejs bot.js"
+    "test": "node bot.js"
   },
   "repository": {
     "type": "git",
