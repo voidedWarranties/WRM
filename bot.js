@@ -38,7 +38,85 @@ client.on("ready", () => {
 socket.on("connect", function() {
   console.log("Client > Server");
   if(process.argv[2] && process.argv[2] == "travis") {
-    process.exit(0);
+    socket.emit("input", {
+      author: {
+        username: "travis",
+        discriminator: "1337",
+        id: "1",
+        avatar: null
+      },
+      content: "travis",
+      url: "http://voidedxd.xyz",
+      attachments: null,
+      id: "1"
+    });
+  }
+});
+
+socket.on("travis", function(data) {
+  switch(parseInt(data.id, 10)) {
+    case 1:
+      socket.emit("resolve", data);
+      socket.emit("input", {
+        author: {
+          username: "travis",
+          discriminator: "1337",
+          id: "1",
+          avatar: null
+        },
+        content: "travis",
+        url: "http://voidedxd.xyz",
+        attachments: null,
+        id: "2"
+      });
+      break;
+    case 2:
+      socket.emit("falsify", data);
+      socket.emit("input", {
+        author: {
+          username: "travis",
+          discriminator: "1337",
+          id: "1",
+          avatar: null
+        },
+        content: "travis",
+        url: "http://voidedxd.xyz",
+        attachments: null,
+        id: "3"
+      });
+      break;
+    case 3:
+      socket.emit("move", data);
+      socket.emit("input", {
+        author: {
+          username: "travis",
+          discriminator: "1337",
+          id: "1",
+          avatar: null
+        },
+        content: "travis",
+        url: "http://voidedxd.xyz",
+        attachments: null,
+        id: "4"
+      });
+      break;
+    case 4:
+      socket.emit("investigate", data);
+      socket.emit("input", {
+        author: {
+          username: "travis",
+          discriminator: "1337",
+          id: "1",
+          avatar: null
+        },
+        content: "travis",
+        url: "http://voidedxd.xyz",
+        attachments: null,
+        id: "5"
+      });
+      break;
+    case 5:
+      socket.emit("remove", data);
   }
 });
 
@@ -55,7 +133,7 @@ client.on("message", message => {
           username: message.author.username,
           discriminator: message.author.discriminator,
           id: message.author.id,
-          avatar: message.author.avatarURL ? message.author.avatarURL : meessage.author.defaultAvatarURL
+          avatar: message.author.avatarURL ? message.author.avatarURL : message.author.defaultAvatarURL
         },
         content: message.content,
         url: Array.from(getUrls(message.content)).length ? Array.from(getUrls(message.content)) : null,

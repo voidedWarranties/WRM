@@ -170,7 +170,6 @@ module.exports = {
 
         const deleteUpdate = (data, message) => { // For some reason, you can't define a variable with name 'delete'
           reports.remove({id: data.id}, function() {
-            bot.guilds.find("id", config.server_id).channels.find("name", "support").send(message);
             reports.find().toArray(function(err, res) { // Weird way of updating list
               if(err) {
                 throw err;
@@ -179,6 +178,7 @@ module.exports = {
               socket.emit("delete", res);
             });
           });
+          bot.guilds.find("id", config.server_id).channels.find("name", "support").send(message);
         }
 
         update();
@@ -186,35 +186,91 @@ module.exports = {
         socket.on("input", function(data) {
           reports.insert(data, function() {
             io.emit("output", [data]);
+            if(process.argv[2] && process.argv[2] == "travis") {
+              switch(parseInt(data.id, 10)) {
+                case 1:
+                  io.emit("travis", data);
+                  break;
+                case 2:
+                  io.emit("travis", data);
+                  break;
+                case 3:
+                  io.emit("travis", data);
+                  break;
+                case 4:
+                  io.emit("travis", data);
+                  break;
+                case 5:
+                  io.emit("travis", data);
+                  break;
+              }
+            }
           });
         });
 
         socket.on("resolve", function(data) {
-          deleteUpdate(data, `Solved, Thanks for reporting <@${data.author.id}>`);
+          if(process.argv[2] == "travis") {
+            deleteUpdate(data, "[Travis Test: Resolve]");
+            console.log("OK: Resolve");
+          } else {
+            deleteUpdate(data, `Solved, Thanks for reporting <@${data.author.id}>`);
+          }
         });
 
         socket.on("falsify", function(data) {
-          deleteUpdate(data, `Invalid report, Not punishable, Thanks for reporting <@${data.author.id}>`);
+          if(process.argv[2] == "travis") {
+            deleteUpdate(data, "[Travis Test: Falsify]");
+            console.log("OK: Falsify");
+          } else {
+            deleteUpdate(data, `Invalid report, Not punishable, Thanks for reporting <@${data.author.id}>`);
+          }
         });
 
         socket.on("move", function(data) {
-          deleteUpdate(data, "Please move to #general for chatting.");
+          if(process.argv[2] == "travis") {
+            deleteUpdate(data, "[Travis Test: Move]");
+            console.log("OK: Move");
+          } else {
+            deleteUpdate(data, "Please move to #general for chatting.");
+          }
         });
 
         socket.on("investigate", function(data) {
-          bot.guilds.find("id", config.server_id).channels.find("name", "support").send(`<@${data.author.id}>, Your report is undergoing investigation, please be patient!`);
+          if(process.argv[2] == "travis") {
+            deleteUpdate(data, "[Travis Test: Investigate]");
+            console.log("OK: Investigate");
+          } else {
+            bot.guilds.find("id", config.server_id).channels.find("name", "support").send(`<@${data.author.id}>, Your report is undergoing investigation, please be patient!`);
+          }
         });
 
         socket.on("remove", function(data) {
-          reports.remove({id: data.id}, function() {
-            reports.find().toArray(function(err, res) { // Weird way of updating list
-              if(err) {
-                throw err;
-              }
-
-              socket.emit("delete", res);
+          if(process.argv[2] == "travis") {
+            reports.remove({id: data.id}, function() {
+              reports.find().toArray(function(err, res) { // Weird way of updating list
+                if(err) {
+                  throw err;
+                }
+  
+                socket.emit("delete", res);
+                bot.guilds.find("id", config.server_id).channels.find("name", "support").send("[Travis Test: Delete]").then(() => {
+                  console.log("OK: Delete");
+                  console.log("Assuming that nothing went wrong, the process will exit now:");
+                  process.exit(0);
+                });
+              });
             });
-          });
+          } else {
+            reports.remove({id: data.id}, function() {
+              reports.find().toArray(function(err, res) { // Weird way of updating list
+                if(err) {
+                  throw err;
+                }
+
+                socket.emit("delete", res);
+              });
+            });
+          }
         });
       });
     });
