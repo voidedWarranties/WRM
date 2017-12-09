@@ -139,6 +139,7 @@ module.exports = {
 
     app.get("/reports", checkAuthenticated, (req, res) => {
       res.render("reports.ejs", {
+        authUser: req.isAuthenticated() ? getAuthUser(req.user) : null,
         config
       });
     });

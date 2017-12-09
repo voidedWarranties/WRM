@@ -6,11 +6,9 @@
     <link rel="stylesheet" type="text/css" href="css/landing.css">
   </head>
   <body>
+    <% include imports/header %>
     <p>Bot logged in as <%= bot.user.username %>#<%= bot.user.discriminator %> (<%= bot.user.id %>)</p>
     <% if(authUser) { %>
-      <p><img src="<%= authUser.avatar %>" alt="<%= authUser.id %>" class="icon"> <%= authUser.username %>#<%= authUser.discriminator %> (<%= authUser.id %>)</p>
-      <a href="/logout">Logout</a>
-      <hr>
       <center>
         <% for(i = 0; i < authUser.guilds.length; i++) { %>
           <% if(authUser.guilds[i].id === config.server_id) { %>
@@ -19,8 +17,6 @@
           <% } %>
         <% } %>
       </center>
-    <% } else { %>
-      <a href="/login">Login</login>
     <% } %>
   </body>
 </html>

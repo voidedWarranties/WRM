@@ -1,0 +1,9 @@
+<header>
+    <% if(authUser) { %>
+        <p><img src="<%= authUser.avatar %>" alt="<%= authUser.id %>" class="icon"> <%= authUser.username %>#<%= authUser.discriminator %> (<%= authUser.id %>)</p>
+        <a href="/logout">Logout</a>
+        <hr>
+    <% } else { %>
+        <a href="/login">Login</login>
+    <% } %>
+</header>

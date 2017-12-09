@@ -20,9 +20,10 @@ const client = new Commando.Client({
 
 client.on("ready", () => {
   console.log(`Ready- Logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
+  console.log(`Invite me with: https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&permissions=2146958591`);
   client.user.setPresence({
     game: {
-      name: "WRM",
+      name: "release -1.0",
       url: "https://twitch.tv/."
     }
   });
