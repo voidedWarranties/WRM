@@ -6,8 +6,10 @@ const ioclient = require("socket.io-client");
 const socket = ioclient(`http://localhost:${config.server_port}`);
 const getUrls = require("get-urls");
 
+const wrm = require("../../utils/wrm");
+
 socket.on("connect", function () {
-    console.log("resolve.js connected to socket")
+    console.log("update.js connected to socket")
 });
 
 module.exports = class UpdateCommand extends Command {
@@ -28,82 +30,38 @@ module.exports = class UpdateCommand extends Command {
                     key: "message",
                     prompt: "What report do you want to resolve?",
                     type: "message"
+                },
+                {
+                    key: "text",
+                    prompt: "What is the custom message you want?",
+                    type: "string",
+                    default: ""
                 }
             ]
         });
     }
 
-    run(msg, { type, message }) {
+    run(msg, { type, message, text }) {
         switch(type) {
             case "ty":
-                socket.emit("resolve", {
-                    author: {
-                        username: message.author.username,
-                        discriminator: message.author.discriminator,
-                        id: message.author.id,
-                        avatar: message.author.avatarURL ? message.author.avatarURL : message.author.defaultAvatarURL
-                    },
-                    content: message.content,
-                    url: Array.from(getUrls(message.content)).length ? Array.from(getUrls(message.content)) : null,
-                    attachments: message.attachments.array().length ? message.attachments.array().map(a => a.url) : null,
-                    id: message.id
-                });
+                wrm.removeWithMessage(socket, message, `Solved, Thanks for reporting <@${message.author.id}>`);
                 break;
             case "no":
-                socket.emit("falsify", {
-                    author: {
-                        username: message.author.username,
-                        discriminator: message.author.discriminator,
-                        id: message.author.id,
-                        avatar: message.author.avatarURL ? message.author.avatarURL : message.author.defaultAvatarURL
-                    },
-                    content: message.content,
-                    url: Array.from(getUrls(message.content)).length ? Array.from(getUrls(message.content)) : null,
-                    attachments: message.attachments.array().length ? message.attachments.array().map(a => a.url) : null,
-                    id: message.id
-                });
+                wrm.removeWithMessage(socket, message, `Invalid report, Not punishable, Thanks for reporting <@${message.author.id}>`);
                 break;
             case "move":
-                socket.emit("move", {
-                    author: {
-                        username: message.author.username,
-                        discriminator: message.author.discriminator,
-                        id: message.author.id,
-                        avatar: message.author.avatarURL ? message.author.avatarURL : message.author.defaultAvatarURL
-                    },
-                    content: message.content,
-                    url: Array.from(getUrls(message.content)).length ? Array.from(getUrls(message.content)) : null,
-                    attachments: message.attachments.array().length ? message.attachments.array().map(a => a.url) : null,
-                    id: message.id
-                });
+                wrm.removeWithMessage(socket, message, "Please move to #general for chatting.");
                 break;
             case "investigate":
-                socket.emit("investigate", {
-                    author: {
-                        username: message.author.username,
-                        discriminator: message.author.discriminator,
-                        id: message.author.id,
-                        avatar: message.author.avatarURL ? message.author.avatarURL : message.author.defaultAvatarURL
-                    },
-                    content: message.content,
-                    url: Array.from(getUrls(message.content)).length ? Array.from(getUrls(message.content)) : null,
-                    attachments: message.attachments.array().length ? message.attachments.array().map(a => a.url) : null,
-                    id: message.id
-                });
+                wrm.investigate(socket, message);
                 break;
             case "remove":
-                socket.emit("remove", {
-                    author: {
-                        username: message.author.username,
-                        discriminator: message.author.discriminator,
-                        id: message.author.id,
-                        avatar: message.author.avatarURL ? message.author.avatarURL : message.author.defaultAvatarURL
-                    },
-                    content: message.content,
-                    url: Array.from(getUrls(message.content)).length ? Array.from(getUrls(message.content)) : null,
-                    attachments: message.attachments.array().length ? message.attachments.array().map(a => a.url) : null,
-                    id: message.id
-                });
+                wrm.remove(socket, message);
+                break;
+            case "custom":
+                if(text) {
+                    wrm.removeWithMessage(socket, message, text);
+                }
                 break;
         }
     }

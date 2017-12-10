@@ -30,15 +30,30 @@
         }
 
         function resolve(data, i) {
-          return function() { socket.emit("resolve", data[i]); };
+          return function() {
+            socket.emit("custom", {
+              message: data[i],
+              text: `Solved, Thanks for reporting <@${data[i].author.id}>`
+            });
+          };
         }
 
         function falsify(data, i) {
-          return function() { socket.emit("falsify", data[i]); };
+          return function() {
+            socket.emit("custom", {
+              message: data[i],
+              text: `Invalid report, Not punishable, Thanks for reporting <@${data[i].author.id}>`
+            });
+          };
         }
 
         function move(data, i) {
-          return function() { socket.emit("move", data[i]); };
+          return function() {
+            socket.emit("custom", {
+              message: data[i],
+              text: "Please move to #general for chatting."
+            });
+          };
         }
 
         function investigate(data, i) {
@@ -46,7 +61,11 @@
         }
 
         function remove(data, i) {
-          return function() { socket.emit("remove", data[i]); };
+          return function() {
+            socket.emit("custom", {
+              message: data[i]
+            })
+          };
         }
 
         function create(data) {

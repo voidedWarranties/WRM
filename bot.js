@@ -63,7 +63,10 @@ socket.on("connect", function() {
 socket.on("travis", function(data) {
   switch(parseInt(data.id, 10)) {
     case 1:
-      socket.emit("resolve", data);
+      socket.emit("custom", {
+        message: data,
+        type: "resolve"
+      });
       socket.emit("input", {
         author: {
           username: "travis",
@@ -78,7 +81,10 @@ socket.on("travis", function(data) {
       });
       break;
     case 2:
-      socket.emit("falsify", data);
+      socket.emit("custom", {
+        message: data,
+        type: "falsify"
+      });
       socket.emit("input", {
         author: {
           username: "travis",
@@ -93,7 +99,10 @@ socket.on("travis", function(data) {
       });
       break;
     case 3:
-      socket.emit("move", data);
+      socket.emit("custom", {
+        message: data,
+        type: "move"
+      });
       socket.emit("input", {
         author: {
           username: "travis",
@@ -123,7 +132,10 @@ socket.on("travis", function(data) {
       });
       break;
     case 5:
-      socket.emit("remove", data);
+      socket.emit("custom", {
+        message: data,
+        type: "remove"
+      });
   }
 });
 
