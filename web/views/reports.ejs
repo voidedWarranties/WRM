@@ -79,7 +79,6 @@
               // Report Image //
               if(data[x].url != null) {
                 for(i = 0; i < data[x].url.length; i++) {
-                  console.log(data[x].url[i]);
                   if(data[x].url[i].endsWith(".png") || data[x].url[i].endsWith(".jpg") || data[x].url[i].endsWith(".jpeg") || data[x].url[i].endsWith(".gif")) {
                     var reportImage = document.createElement("img");
 
@@ -93,7 +92,6 @@
 
               if(data[x].attachments != null) { // We do this in case both an attachment and a link are sent
                 for(i = 0; i < data[x].attachments.length; i++) {
-                  console.log(data[x].attachments[i]);
                   if(data[x].attachments[i].endsWith(".png") || data[x].attachments[i].endsWith(".jpg") || data[x].attachments[i].endsWith(".jpeg") || data[x].attachments[i].endsWith(".gif")) {
                     var reportImage = document.createElement("img");
 

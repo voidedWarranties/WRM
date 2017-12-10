@@ -23,7 +23,7 @@ client.on("ready", () => {
   console.log(`Invite me with: https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&permissions=2146958591`);
   client.user.setPresence({
     game: {
-      name: "release -1.0",
+      name: `release ${config.version}`,
       url: "https://twitch.tv/."
     }
   });
@@ -33,6 +33,12 @@ client.on("ready", () => {
   webServer.io(client, () => {
     console.log("Callback was received from index.js, socket client connecting");
     socket.connect();
+    client.registry
+    .registerDefaultTypes()
+    .registerGroups([
+      ["wrm", "Wonderland Report Manager"]
+    ])
+    .registerCommandsIn(path.join(__dirname, "commands"));
   });
 });
 

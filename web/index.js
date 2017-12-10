@@ -176,7 +176,7 @@ module.exports = {
                 throw err;
               }
 
-              socket.emit("delete", res);
+              io.emit("delete", res);
             });
           });
           bot.guilds.find("id", config.server_id).channels.find("name", "support").send(message);
@@ -253,7 +253,7 @@ module.exports = {
                   throw err;
                 }
   
-                socket.emit("delete", res);
+                io.emit("delete", res);
                 bot.guilds.find("id", config.server_id).channels.find("name", "support").send("[Travis Test: Delete]").then(() => {
                   console.log("OK: Delete");
                   console.log("Assuming that nothing went wrong, the process will exit now:");
@@ -268,7 +268,7 @@ module.exports = {
                   throw err;
                 }
 
-                socket.emit("delete", res);
+                io.emit("delete", res);
               });
             });
           }
