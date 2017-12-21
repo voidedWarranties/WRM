@@ -57,7 +57,12 @@
         }
 
         function investigate(data, i) {
-          return function() { socket.emit("investigate", data[i]); };
+          return function() {
+            socket.emit("nodelcustom", {
+              message: data[i],
+              text: `<@${data[i].author.id}>, Your report is undergoing investigation, please be patient!`
+            });
+          };
         }
 
         function remove(data, i) {

@@ -196,9 +196,17 @@ module.exports = {
           });
         });
 
-        socket.on("investigate", function(data) {
+        socket.on("nodelcustom", function(data) {
           if(process.argv[2] == "travis") {
-            reports.remove({id: data.id}, function() {
+            if(data.type) {
+              switch(data.type) {
+                case "investigate":
+                  console.log("OK: Investigate");
+                  break;
+              }
+            }
+
+            reports.remove({id: data.message.id}, function() {
               reports.find().toArray(function(err, res) { // Weird way of updating list
                 if(err) {
                   throw err;
@@ -207,9 +215,8 @@ module.exports = {
                 io.emit("delete", res);
               });
             });
-            console.log("OK: Investigate");
           } else {
-            bot.guilds.find("id", config.server_id).channels.find("name", "support").send(`<@${data.author.id}>, Your report is undergoing investigation, please be patient!`);
+            bot.guilds.find("id", config.server_id).channels.find("name", "support").send(data.text);
           }
         });
 

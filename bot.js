@@ -117,7 +117,10 @@ socket.on("travis", function(data) {
       });
       break;
     case 4:
-      socket.emit("investigate", data);
+      socket.emit("nodelcustom", {
+        message: data,
+        type: "investigate"
+      });
       socket.emit("input", {
         author: {
           username: "travis",

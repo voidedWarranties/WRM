@@ -59,3 +59,4 @@ typings/
 
 # other
 config.json
+yarn.lock
