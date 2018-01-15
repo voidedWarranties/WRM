@@ -169,6 +169,13 @@ module.exports = {
           });
         }
 
+        const setStatus = (data) => {
+          return reports.findAndModify({id: data.message.id},
+            [["id", "asc"]],
+            {$set: {status: data.status}},
+            {});
+        }
+
         update();
 
         socket.on("input", function(data) {
@@ -217,6 +224,7 @@ module.exports = {
             });
           } else {
             bot.guilds.find("id", config.server_id).channels.find("name", "support").send(data.text);
+            setStatus(data);
           }
         });
 
@@ -238,23 +246,33 @@ module.exports = {
                   break;
               }
             }
-          }
-          reports.remove({id: data.message.id}, function() {
-            reports.find().toArray(function(err, res) { // Weird way of updating list
-              if(err) {
-                throw err;
-              }
 
-              io.emit("delete", res);
-              
-              if(data.type == "remove" && process.argv[2] == "travis") {
-                console.log("Assuming that nothing went wrong, the process will exit now:");
-                process.exit(0);
-              }
+            reports.remove({id: data.message.id}, function() {
+              reports.find().toArray(function(err, res) { // Weird way of updating list
+                if(err) {
+                  throw err;
+                }
+  
+                io.emit("delete", res);
+                
+                if(data.type == "remove" && process.argv[2] == "travis") {
+                  console.log("Assuming that nothing went wrong, the process will exit now:");
+                  process.exit(0);
+                }
+              });
             });
-          });
+          }
           if(data.text && process.argv[2] != "travis") {
             bot.guilds.find("id", config.server_id).channels.find("name", "support").send(data.text);
+            setStatus(data).then(() => {
+              reports.find().toArray(function(err, res) { // Weird way of updating list
+                if(err) {
+                  throw err;
+                }
+  
+                io.emit("delete", res);
+              });
+            });
           }
         });
       });

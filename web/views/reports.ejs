@@ -33,7 +33,8 @@
           return function() {
             socket.emit("custom", {
               message: data[i],
-              text: `Solved, Thanks for reporting <@${data[i].author.id}>`
+              text: `Solved, Thanks for reporting <@${data[i].author.id}>`,
+              status: "Solved"
             });
           };
         }
@@ -42,7 +43,8 @@
           return function() {
             socket.emit("custom", {
               message: data[i],
-              text: `Invalid report, Not punishable, Thanks for reporting <@${data[i].author.id}>`
+              text: `Invalid report, Not punishable, Thanks for reporting <@${data[i].author.id}>`,
+              status: "Invalid"
             });
           };
         }
@@ -51,7 +53,8 @@
           return function() {
             socket.emit("custom", {
               message: data[i],
-              text: "Please move to #general for chatting."
+              text: "Please move to #general for chatting.",
+              status: "Invalid - Move to #general"
             });
           };
         }
@@ -60,7 +63,8 @@
           return function() {
             socket.emit("nodelcustom", {
               message: data[i],
-              text: `<@${data[i].author.id}>, Your report is undergoing investigation, please be patient!`
+              text: `<@${data[i].author.id}>, Your report is undergoing investigation, please be patient!`,
+              status: "Under Investigation"
             });
           };
         }
@@ -68,7 +72,8 @@
         function remove(data, i) {
           return function() {
             socket.emit("custom", {
-              message: data[i]
+              message: data[i],
+              status: "Removed"
             })
           };
         }
@@ -76,179 +81,181 @@
         function create(data) {
           if(data.length) {
             for(var x = 0; x < data.length; x++) {
-              // Report //
-              var report = document.createElement("div");
+              if(!data[x].status || data[x].status == "Under Investigation") {
+                // Report //
+                var report = document.createElement("div");
 
-              report.setAttribute("class", "report");
-              // Report //
+                report.setAttribute("class", "report");
+                // Report //
 
-              // Avatar //
-              var avatar = document.createElement("img");
+                // Avatar //
+                var avatar = document.createElement("img");
 
-              avatar.setAttribute("src", data[x].author.avatar);
-              avatar.setAttribute("style", "border-radius: 100%; width: 32px; height: 32px; vertical-align: middle; display: inline;");
+                avatar.setAttribute("src", data[x].author.avatar);
+                avatar.setAttribute("style", "border-radius: 100%; width: 32px; height: 32px; vertical-align: middle; display: inline;");
 
-              report.appendChild(avatar);
-              // Avatar //
+                report.appendChild(avatar);
+                // Avatar //
 
-              // Report Content //
-              var reportContent = document.createElement("span");
+                // Report Content //
+                var reportContent = document.createElement("span");
 
-              reportContent.setAttribute("style", "padding-left: 0.5em;");
-              reportContent.textContent = data[x].author.username + "#" + data[x].author.discriminator + ": " + data[x].content;
+                reportContent.setAttribute("style", "padding-left: 0.5em;");
+                reportContent.textContent = data[x].author.username + "#" + data[x].author.discriminator + ": " + data[x].content;
 
-              report.appendChild(reportContent);
-              // Report Content //
+                report.appendChild(reportContent);
+                // Report Content //
 
-              // Report Image //
-              if(data[x].url != null) {
-                for(i = 0; i < data[x].url.length; i++) {
-                  if(data[x].url[i].endsWith(".png") || data[x].url[i].endsWith(".jpg") || data[x].url[i].endsWith(".jpeg") || data[x].url[i].endsWith(".gif")) {
-                    var reportImage = document.createElement("img");
+                // Report Image //
+                if(data[x].url != null) {
+                  for(i = 0; i < data[x].url.length; i++) {
+                    if(data[x].url[i].endsWith(".png") || data[x].url[i].endsWith(".jpg") || data[x].url[i].endsWith(".jpeg") || data[x].url[i].endsWith(".gif")) {
+                      var reportImage = document.createElement("img");
 
-                    reportImage.setAttribute("src", data[x].url[i]);
-                    reportImage.setAttribute("style", "max-height: 75%; max-width: 75%; padding-top: 0.5em;");
+                      reportImage.setAttribute("src", data[x].url[i]);
+                      reportImage.setAttribute("style", "max-height: 75%; max-width: 75%; padding-top: 0.5em;");
 
-                    report.appendChild(reportImage);
+                      report.appendChild(reportImage);
+                    }
                   }
                 }
-              }
 
-              if(data[x].attachments != null) { // We do this in case both an attachment and a link are sent
-                for(i = 0; i < data[x].attachments.length; i++) {
-                  if(data[x].attachments[i].endsWith(".png") || data[x].attachments[i].endsWith(".jpg") || data[x].attachments[i].endsWith(".jpeg") || data[x].attachments[i].endsWith(".gif")) {
-                    var reportImage = document.createElement("img");
+                if(data[x].attachments != null) { // We do this in case both an attachment and a link are sent
+                  for(i = 0; i < data[x].attachments.length; i++) {
+                    if(data[x].attachments[i].endsWith(".png") || data[x].attachments[i].endsWith(".jpg") || data[x].attachments[i].endsWith(".jpeg") || data[x].attachments[i].endsWith(".gif")) {
+                      var reportImage = document.createElement("img");
 
-                    reportImage.setAttribute("src", data[x].attachments[i]);
-                    reportImage.setAttribute("style", "max-height: 75%; max-width: 75%");
+                      reportImage.setAttribute("src", data[x].attachments[i]);
+                      reportImage.setAttribute("style", "max-height: 75%; max-width: 75%");
 
-                    report.appendChild(reportImage);
+                      report.appendChild(reportImage);
+                    }
                   }
                 }
+                // Report Image //
+
+                // Spacer //
+                var spacer = document.createElement("br");
+
+                report.appendChild(spacer);
+                // Spacer //
+
+                // Resolve Button //
+                // Resolve Glyph //
+                var resolveGlyph = document.createElement("span");
+
+                resolveGlyph.setAttribute("class", "glyphicon glyphicon-ok");
+                // Resolve Glyph //
+                // Resolve Text //
+                var resolveText = document.createElement("span");
+
+                resolveText.textContent = " Resolve";
+                // Resolve Text //
+                var resolveButton = document.createElement("button");
+
+                resolveButton.setAttribute("class", "btn btn-success");
+                resolveButton.onclick = resolve(data, x); // JS is stupid in some ways so this is required.
+
+                resolveButton.appendChild(resolveGlyph);
+                resolveButton.appendChild(resolveText);
+                report.appendChild(resolveButton);
+                // Resolve Button //
+
+                // False Report Button //
+                // False Report Glyph //
+                var falsifyGlyph = document.createElement("span");
+
+                falsifyGlyph.setAttribute("class", "glyphicon glyphicon-remove");
+                // False Report Glyph //
+                // False Report Text //
+                var falsifyText = document.createElement("span");
+
+                falsifyText.textContent = " Falsify";
+                // False Report Text //
+                var falsifyButton = document.createElement("button");
+
+                falsifyButton.setAttribute("class", "btn btn-warning");
+                falsifyButton.onclick = falsify(data, x);
+
+                falsifyButton.appendChild(falsifyGlyph);
+                falsifyButton.appendChild(falsifyText);
+                report.appendChild(falsifyButton);
+                // False Report Button //
+
+                // Move Button //
+                // Move Glyph //
+                var moveGlyph = document.createElement("span");
+
+                moveGlyph.setAttribute("class", "glyphicon glyphicon-arrow-right");
+                // Move Glyph //
+                // Move Text //
+                var moveText = document.createElement("span");
+
+                moveText.textContent = " Move to #general";
+                // Move Text //
+                var moveButton = document.createElement("button");
+
+                moveButton.setAttribute("class", "btn btn-danger");
+                moveButton.onclick = move(data, x);
+
+                moveButton.appendChild(moveGlyph);
+                moveButton.appendChild(moveText);
+                report.appendChild(moveButton);
+                // Move Button //
+
+                // Investigate Button //
+                // Investigate Glyph //
+                var investigateGlyph = document.createElement("span");
+
+                investigateGlyph.setAttribute("class", "glyphicon glyphicon-search");
+                // Investigate Glyph //
+                // Investigate Text //
+                var investigateText = document.createElement("span");
+
+                investigateText.textContent = " Investigate";
+                // Investigate Text //
+                var investigateButton = document.createElement("button");
+
+                investigateButton.setAttribute("class", "btn btn-info");
+                investigateButton.onclick = investigate(data, x);
+
+                investigateButton.appendChild(investigateGlyph);
+                investigateButton.appendChild(investigateText);
+                report.appendChild(investigateButton);
+                // Investigate Button //
+
+                // Delete Button //
+                // Delete Glyph //
+                var deleteGlyph = document.createElement("span");
+
+                deleteGlyph.setAttribute("class", "glyphicon glyphicon-remove");
+                // Delete Glyph //
+                // Delete Text //
+                var deleteText = document.createElement("span");
+
+                deleteText.textContent = " Delete";
+                // Delete Text //
+                var deleteButton = document.createElement("button");
+
+                deleteButton.setAttribute("class", "btn btn-danger");
+                deleteButton.onclick = remove(data, x);
+
+                deleteButton.appendChild(deleteGlyph);
+                deleteButton.appendChild(deleteText);
+                report.appendChild(deleteButton);
+                // Delete Button //
+
+                // Break Line //
+                var breakLine = document.createElement("hr");
+
+                report.appendChild(breakLine);
+                // Break Line //
+
+                reports.appendChild(report);
+
+                report.insertBefore(avatar, reportContent);
+                reports.insertBefore(report, reports.firstChild);
               }
-              // Report Image //
-
-              // Spacer //
-              var spacer = document.createElement("br");
-
-              report.appendChild(spacer);
-              // Spacer //
-
-              // Resolve Button //
-              // Resolve Glyph //
-              var resolveGlyph = document.createElement("span");
-
-              resolveGlyph.setAttribute("class", "glyphicon glyphicon-ok");
-              // Resolve Glyph //
-              // Resolve Text //
-              var resolveText = document.createElement("span");
-
-              resolveText.textContent = " Resolve";
-              // Resolve Text //
-              var resolveButton = document.createElement("button");
-
-              resolveButton.setAttribute("class", "btn btn-success");
-              resolveButton.onclick = resolve(data, x); // JS is stupid in some ways so this is required.
-
-              resolveButton.appendChild(resolveGlyph);
-              resolveButton.appendChild(resolveText);
-              report.appendChild(resolveButton);
-              // Resolve Button //
-
-              // False Report Button //
-              // False Report Glyph //
-              var falsifyGlyph = document.createElement("span");
-
-              falsifyGlyph.setAttribute("class", "glyphicon glyphicon-remove");
-              // False Report Glyph //
-              // False Report Text //
-              var falsifyText = document.createElement("span");
-
-              falsifyText.textContent = " Falsify";
-              // False Report Text //
-              var falsifyButton = document.createElement("button");
-
-              falsifyButton.setAttribute("class", "btn btn-warning");
-              falsifyButton.onclick = falsify(data, x);
-
-              falsifyButton.appendChild(falsifyGlyph);
-              falsifyButton.appendChild(falsifyText);
-              report.appendChild(falsifyButton);
-              // False Report Button //
-
-              // Move Button //
-              // Move Glyph //
-              var moveGlyph = document.createElement("span");
-
-              moveGlyph.setAttribute("class", "glyphicon glyphicon-arrow-right");
-              // Move Glyph //
-              // Move Text //
-              var moveText = document.createElement("span");
-
-              moveText.textContent = " Move to #general";
-              // Move Text //
-              var moveButton = document.createElement("button");
-
-              moveButton.setAttribute("class", "btn btn-danger");
-              moveButton.onclick = move(data, x);
-
-              moveButton.appendChild(moveGlyph);
-              moveButton.appendChild(moveText);
-              report.appendChild(moveButton);
-              // Move Button //
-
-              // Investigate Button //
-              // Investigate Glyph //
-              var investigateGlyph = document.createElement("span");
-
-              investigateGlyph.setAttribute("class", "glyphicon glyphicon-search");
-              // Investigate Glyph //
-              // Investigate Text //
-              var investigateText = document.createElement("span");
-
-              investigateText.textContent = " Investigate";
-              // Investigate Text //
-              var investigateButton = document.createElement("button");
-
-              investigateButton.setAttribute("class", "btn btn-info");
-              investigateButton.onclick = investigate(data, x);
-
-              investigateButton.appendChild(investigateGlyph);
-              investigateButton.appendChild(investigateText);
-              report.appendChild(investigateButton);
-              // Investigate Button //
-
-              // Delete Button //
-              // Delete Glyph //
-              var deleteGlyph = document.createElement("span");
-
-              deleteGlyph.setAttribute("class", "glyphicon glyphicon-remove");
-              // Delete Glyph //
-              // Delete Text //
-              var deleteText = document.createElement("span");
-
-              deleteText.textContent = " Delete";
-              // Delete Text //
-              var deleteButton = document.createElement("button");
-
-              deleteButton.setAttribute("class", "btn btn-danger");
-              deleteButton.onclick = remove(data, x);
-
-              deleteButton.appendChild(deleteGlyph);
-              deleteButton.appendChild(deleteText);
-              report.appendChild(deleteButton);
-              // Delete Button //
-
-              // Break Line //
-              var breakLine = document.createElement("hr");
-
-              report.appendChild(breakLine);
-              // Break Line //
-
-              reports.appendChild(report);
-
-              report.insertBefore(avatar, reportContent);
-              reports.insertBefore(report, reports.firstChild);
             }
           }
         }

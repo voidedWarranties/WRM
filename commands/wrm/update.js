@@ -8,8 +8,8 @@ const getUrls = require("get-urls");
 
 const wrm = require("../../utils/wrm");
 
-socket.on("connect", function () {
-    console.log("update.js connected to socket")
+socket.on("connect", function() {
+    console.log("update.js connected to socket");
 });
 
 module.exports = class UpdateCommand extends Command {
@@ -17,8 +17,8 @@ module.exports = class UpdateCommand extends Command {
         super(client, {
             name: "say",
             group: "wrm",
-            memberName: "resolve",
-            description: "Resolves the report with the given message ID.",
+            memberName: "say",
+            description: "Solves the report with the given message ID.",
             examples: ["wrm pls say ty 123456789012345678"],
             args: [
                 {
