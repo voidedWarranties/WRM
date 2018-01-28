@@ -45,23 +45,23 @@ module.exports = class UpdateCommand extends Command {
         if(config.trusted_user_ids.indexOf(msg.author.id) > -1 || msg.author.id === config.owner_id) {
             switch(type) {
                 case "ty":
-                    wrm.removeWithMessage(socket, message, `Solved, Thanks for reporting <@${message.author.id}>`);
+                    wrm.removeWithMessage(socket, message, `Solved, Thanks for reporting <@${message.author.id}>`, "Solved");
                     break;
                 case "no":
-                    wrm.removeWithMessage(socket, message, `Invalid report, Not punishable, Thanks for reporting <@${message.author.id}>`);
+                    wrm.removeWithMessage(socket, message, `Invalid report, Not punishable, Thanks for reporting <@${message.author.id}>`, "Invalid");
                     break;
                 case "move":
-                    wrm.removeWithMessage(socket, message, "Please move to #general for chatting.");
+                    wrm.removeWithMessage(socket, message, "Please move to #general for chatting.", "Invalid - Move to #general");
                     break;
                 case "investigate":
-                    wrm.noRemove(socket, message, `<@${message.author.id}>, Your report is undergoing investigation, please be patient!`);
+                    wrm.noRemove(socket, message, `<@${message.author.id}>, Your report is undergoing investigation, please be patient!`, "Under Investigation");
                     break;
                 case "remove":
-                    wrm.remove(socket, message);
+                    wrm.remove(socket, message, "Removed");
                     break;
                 case "custom":
                     if(text) {
-                        wrm.removeWithMessage(socket, message, text);
+                        wrm.removeWithMessage(socket, message, text, `Custom - ${text}`);
                     }
                     break;
             }

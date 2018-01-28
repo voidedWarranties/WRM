@@ -23,7 +23,7 @@ client.on("ready", () => {
   console.log(`Invite me with: https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&permissions=2146958591`);
   client.user.setPresence({
     game: {
-      name: `release ${config.version}`,
+      name: `${config.version}`,
       url: "https://twitch.tv/."
     }
   });
@@ -160,7 +160,8 @@ client.on("message", message => {
         content: message.content,
         url: Array.from(getUrls(message.content)).length ? Array.from(getUrls(message.content)) : null,
         attachments: message.attachments.array().length ? message.attachments.array().map(a => a.url) : null,
-        id: message.id
+        id: message.id,
+        status: "Submitted"
       });
     }
   }

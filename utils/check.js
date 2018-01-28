@@ -13,7 +13,7 @@ mongo.connect(config.mongodb_url, function(err, db) {
 
     find = (id) => {
         return reports.findOne({id: id}, {}).then(document => {
-            return document.status;
+            return document;
         });
     };
 
