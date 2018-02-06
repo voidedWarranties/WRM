@@ -33,11 +33,13 @@ module.exports = class CheckCommand extends Command {
 
     run(msg, { message }) {
         checkUtil.find(message.id).then((document) => {
-            const checkE = new Discord.RichEmbed();
-            checkE.setAuthor(`${document.author.username}#${document.author.discriminator}`, document.author.avatar);
-            checkE.setTitle(`Status for Report ID ${message.id}`);
-            checkE.setDescription(`Status: ${document.status}`);
-            msg.channel.send(checkE);
+            if(document) {
+                const checkE = new Discord.RichEmbed();
+                checkE.setAuthor(`${document.author.username}#${document.author.discriminator}`, document.author.avatar);
+                checkE.setTitle(`Status for Report ID ${message.id}`);
+                checkE.setDescription(`Status: ${document.status}`);
+                msg.channel.send(checkE);
+            }
         });
     }
 }

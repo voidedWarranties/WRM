@@ -8,8 +8,8 @@
   "server_ip": "localhost",
   "server_port": 1337,
   "mongodb_url": "mongodb://localhost/wrm",
-  "trusted_user_ids": ["", ""],
   "server_id": "",
   "socket_url": "",
-  "version": "1.1.0"
+  "version": "1.1.0",
+  "wrm_rolename": ""
 }

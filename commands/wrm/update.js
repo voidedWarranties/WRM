@@ -42,7 +42,7 @@ module.exports = class UpdateCommand extends Command {
     }
 
     run(msg, { type, message, text }) {
-        if(config.trusted_user_ids.indexOf(msg.author.id) > -1 || msg.author.id === config.owner_id) {
+        if(msg.author.id === config.owner_id || this.client.guilds.find("id", config.server_id).members.find("id", msg.author.id).roles.find("name", config.wrm_rolename)) {
             switch(type) {
                 case "ty":
                     wrm.removeWithMessage(socket, message, `Solved, Thanks for reporting <@${message.author.id}>`, "Solved");
