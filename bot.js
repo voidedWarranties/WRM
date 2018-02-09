@@ -148,21 +148,23 @@ socket.on("error", function(error) {
 });
 
 client.on("message", message => {
-  if(message.channel.guild.id === config.server_id && message.channel.name === "support") {
-    if(message.attachments.array().length || Array.from(getUrls(message.content)).length) {
-      socket.emit("input", {
-        author: {
-          username: message.author.username,
-          discriminator: message.author.discriminator,
-          id: message.author.id,
-          avatar: message.author.avatarURL ? message.author.avatarURL : message.author.defaultAvatarURL
-        },
-        content: message.content,
-        url: Array.from(getUrls(message.content)).length ? Array.from(getUrls(message.content)) : null,
-        attachments: message.attachments.array().length ? message.attachments.array().map(a => a.url) : null,
-        id: message.id,
-        status: "Submitted"
-      });
+  if(message.channel.guild) {
+    if(message.channel.guild.id === config.server_id && message.channel.name === "support") {
+      if(message.attachments.array().length || Array.from(getUrls(message.content)).length) {
+        socket.emit("input", {
+          author: {
+            username: message.author.username,
+            discriminator: message.author.discriminator,
+            id: message.author.id,
+            avatar: message.author.avatarURL ? message.author.avatarURL : message.author.defaultAvatarURL
+          },
+          content: message.content,
+          url: Array.from(getUrls(message.content)).length ? Array.from(getUrls(message.content)) : null,
+          attachments: message.attachments.array().length ? message.attachments.array().map(a => a.url) : null,
+          id: message.id,
+          status: "Submitted"
+        });
+      }
     }
   }
 });

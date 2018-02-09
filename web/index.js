@@ -121,9 +121,15 @@ module.exports = {
     app.get("/login/callback", passport.authenticate("discord", {
       failureRedirect: "/"
     }), (req, res) => {
+      console.log("===");
+      console.log(req.user.username);
+      console.log(bot.guilds.find("id", config.server_id).members.find("id", req.user.id).roles.find("name", config.wrm_rolename));
+      console.log(req.user.id === config.owner_id);
+      console.log("===");
       if(req.user.id === config.owner_id || bot.guilds.find("id", config.server_id).members.find("id", req.user.id).roles.find("name", config.wrm_rolename)) {
         res.redirect("/");
       } else {
+        req.logout();
         res.redirect("/error");
       }
     });
