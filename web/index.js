@@ -268,8 +268,10 @@ module.exports = {
               });
             });
           }
-          if(data.text && process.argv[2] != "travis") {
-            bot.guilds.find("id", config.server_id).channels.find("name", "support").send(data.text);
+          if(process.argv[2] != "travis") {
+            if(data.text) {
+              bot.guilds.find("id", config.server_id).channels.find("name", "support").send(data.text);
+            }
             setStatus(data).then(() => {
               reports.find().toArray(function(err, res) { // Weird way of updating list
                 if(err) {
