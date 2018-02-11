@@ -26,7 +26,7 @@ module.exports = class RegisterCommand extends Command {
             if(regid === "init") {
                 this.client.user.setPresence({
                     game: {
-                        name: randomstring.generate(16),
+                        name: randomstring.generate(8),
                         url: "https://twitch.tv/."
                     }
                 });
@@ -36,7 +36,7 @@ module.exports = class RegisterCommand extends Command {
                 msg.member.addRole(this.client.guilds.find("id", config.server_id).roles.find("name", config.wrm_rolename));
                 this.client.user.setPresence({
                     game: {
-                        name: randomstring.generate(16),
+                        name: randomstring.generate(8),
                         url: "https://twitch.tv/."
                     }
                 });
